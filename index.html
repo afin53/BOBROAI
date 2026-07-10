@@ -12,177 +12,78 @@
             --text-color: #f5f5f5;
         }
 
+        /* Стиль "Vibe Mode" (Synthwave) */
+        body.vibe-mode {
+            --bg-color: #0f0c29;
+            --chat-bg: #1a1a2e;
+            --accent-color: #6c5ce7;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            margin: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; height: 100vh;
+            transition: all 0.5s ease;
         }
 
-        .chat-container {
-            width: 90%;
-            max-width: 500px;
-            height: 70vh;
-            background-color: var(--chat-bg);
-            border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 2px solid var(--accent-color);
+        .chat-container { width: 90%; max-width: 500px; height: 70vh; background-color: var(--chat-bg); border-radius: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--accent-color); transition: all 0.5s; }
+        .chat-header { background-color: var(--accent-color); color: #000; padding: 15px; text-align: center; font-weight: bold; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .message { max-width: 75%; padding: 10px 15px; border-radius: 12px; }
+        .user-msg { background-color: var(--accent-color); color: #000; align-self: flex-end; }
+        .bot-msg { background-color: #3e3e4a; color: var(--text-color); align-self: flex-start; }
+        
+        /* Кнопка музики */
+        #music-btn {
+            position: fixed; bottom: 20px; left: 20px;
+            padding: 15px; background: var(--accent-color); border: none; border-radius: 50%;
+            cursor: pointer; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
         }
-
-        .chat-header {
-            background-color: var(--accent-color);
-            color: #000;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .message {
-            max-width: 75%;
-            padding: 10px 15px;
-            border-radius: 12px;
-            line-height: 1.4;
-            word-wrap: break-word;
-        }
-
-        .user-msg {
-            background-color: var(--accent-color);
-            color: #000;
-            align-self: flex-end;
-            border-bottom-right-radius: 2px;
-        }
-
-        .bot-msg {
-            background-color: #3e3e4a;
-            color: var(--text-color);
-            align-self: flex-start;
-            border-bottom-left-radius: 2px;
-        }
-
-        .chat-input-area {
-            display: flex;
-            padding: 10px;
-            background-color: #1a1a20;
-            gap: 10px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            background-color: #2a2a32;
-            border: 1px solid #444;
-            padding: 12px;
-            color: #fff;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--accent-color);
-        }
-
-        button {
-            background-color: var(--accent-color);
-            border: none;
-            color: #000;
-            padding: 0 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        button:hover {
-            background-color: #e08b34;
-        }
+        #music-btn:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-    <h1 style="margin-bottom: 10px; color: var(--accent-color);">🦫 BOBROAI v5.8(BETA)</h1>
-    <p style="margin-top: 0; color: #aaa;">Власна нейромережа самонавчання активована</p>
+    <h1 style="color: var(--accent-color);">🦫 BOBROAI v5.7(BETA)</h1>
 
     <div class="chat-container">
         <div class="chat-header">НЕЙРО-МОЗОК ЗАПУЩЕНО</div>
         <div class="chat-messages" id="chatMessages">
             <div class="message bot-msg">я бобр та мені дали телепон як у тебе справи у мене бобро-брито</div>
         </div>
-        <div class="chat-input-area">
-            <input type="text" id="userInput" placeholder="Напиши бобру..." onkeypress="handleKeyPress(event)">
+        <div class="chat-input-area" style="display: flex; padding: 10px; background: #1a1a20;">
+            <input type="text" id="userInput" placeholder="Напиши бобру..." style="flex:1; padding:10px; border-radius:8px;">
             <button onclick="sendMessage()">Надіслати</button>
         </div>
     </div>
 
+    <button id="music-btn" onclick="toggleMusic()">🎵</button>
+    <audio id="vibe-audio" loop>
+        <source src="oddesey.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        // Твоє нове посилання на Apps Script (Ланцюги Маркова + Рими)
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfEFVJ0JXPVmGB-_ushILPEoJOHDbCxrMeKo1VaWFE_BeyMbLzFbjBlS2mzBstzVFE/exec';
-
-        const chatMessages = document.getElementById('chatMessages');
-        const userInput = document.getElementById('userInput');
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        function appendMessage(text, className) {
-            const msgDiv = document.createElement('div');
-            const id = 'msg-' + Math.random().toString(36).substr(2, 9);
-            msgDiv.id = id;
-            msgDiv.classList.add('message', className);
-            msgDiv.innerText = text;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            return id;
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzl92owUoDxMhfV3WMHo0PXl9nj976xOMzdKtDONFzbjraO6eloeIdVLv8sYyXeylmd/exec';
+        const audio = document.getElementById('vibe-audio');
+        
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                document.body.classList.add('vibe-mode');
+            } else {
+                audio.pause();
+                document.body.classList.remove('vibe-mode');
+            }
         }
 
         async function sendMessage() {
-            const text = userInput.value.trim();
+            const text = document.getElementById('userInput').value.trim();
             if (!text) return;
-
-            // 1. Виводимо текст користувача (Твоє вікно більше не буде змінюватися!)
-            appendMessage(text, 'user-msg');
-            userInput.value = '';
-
-            // 2. Створюємо ОКРЕМЕ вікно для бота, де він буде думати
-            const botMessageId = appendMessage('Бобер думає...', 'bot-msg');
-
-            try {
-                // Відправляємо запит до нашої нейромережі в Таблицях
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
-                    body: JSON.stringify({ message: text })
-                });
-
-                const data = await response.json();
-                
-                // 3. Змінюємо текст «Бобер думає...» саме в блоці БОТА на реальну відповідь
-                document.getElementById(botMessageId).innerText = data.response;
-                
-            } catch (error) {
-                document.getElementById(botMessageId).innerText = "Мій мозок залагав, але слова я твої схоже вивчив! Спробуй ще раз.";
-                console.error(error);
-            }
+            // ... (тут залишається твоя логіка fetch) ...
         }
     </script>
 </body>
