@@ -61,6 +61,7 @@
             padding: 10px 15px;
             border-radius: 12px;
             line-height: 1.4;
+            word-wrap: break-word;
         }
 
         .user-msg {
@@ -116,13 +117,13 @@
 </head>
 <body>
 
-    <h1 style="margin-bottom: 10px; color: var(--accent-color);">🦫 BOBROAI v1.0</h1>
-    <p style="margin-top: 0; color: #aaa;">Офіційний ШІ з мізками в Google Sheets</p>
+    <h1 style="margin-bottom: 10px; color: var(--accent-color);">🦫 BOBROAI v2.5</h1>
+    <p style="margin-top: 0; color: #aaa;">Власна нейромережа самонавчання активована</p>
 
     <div class="chat-container">
-        <div class="chat-header">МІЗОК АКТИВОВАНО</div>
+        <div class="chat-header">НЕЙРО-МОЗОК ЗАПУЩЕНО</div>
         <div class="chat-messages" id="chatMessages">
-            <div class="message bot-msg">Привіт! Я BOBROAI. Запитай мене про щось, і я збережу це у свій мозок!</div>
+            <div class="message bot-msg">Привіт! Я BOBROAI. Напиши мені щось розумне, я вивчу твої слова і побудую власну нейро-відповідь!</div>
         </div>
         <div class="chat-input-area">
             <input type="text" id="userInput" placeholder="Напиши бобру..." onkeypress="handleKeyPress(event)">
@@ -131,8 +132,8 @@
     </div>
 
     <script>
-        // Твоє офіційне посилання на Google Apps Script мізок
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwRWKM46WMp76v5-tuIL--1akGPdu4PhwipTVqg9e5hCI73vVsFF3ErN5EhCbRAYZi8/exec';
+        // Твоє нове посилання на Apps Script (Ланцюги Маркова + Рими)
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcOuXIRyL36xuSAy6RpFhepaIjM8GEE_Gok3b1eUqaL7nIxTCWpv7FspAS72HMFXPD/exec';
 
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
@@ -141,19 +142,30 @@
             if (e.key === 'Enter') sendMessage();
         }
 
+        function appendMessage(text, className) {
+            const msgDiv = document.createElement('div');
+            const id = 'msg-' + Math.random().toString(36).substr(2, 9);
+            msgDiv.id = id;
+            msgDiv.classList.add('message', className);
+            msgDiv.innerText = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return id;
+        }
+
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Відображаємо повідомлення користувача
+            // 1. Виводимо текст користувача (Твоє вікно більше не буде змінюватися!)
             appendMessage(text, 'user-msg');
             userInput.value = '';
 
-            // Створюємо повідомлення "думання"
-            const typingId = appendMessage('Бобер думає...', 'bot-msg');
+            // 2. Створюємо ОКРЕМЕ вікно для бота, де він буде думати
+            const botMessageId = appendMessage('Бобер думає...', 'bot-msg');
 
             try {
-                // Відправляємо дані методом POST через текстову форму, щоб уникнути CORS блокування тексту відповіді
+                // Відправляємо запит до нашої нейромережі в Таблицях
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     headers: {
@@ -164,24 +176,13 @@
 
                 const data = await response.json();
                 
-                // Оновлюємо текст "думання" на реальну відповідь від BOBROAI
-                document.getElementById(typingId).innerText = data.response;
+                // 3. Змінюємо текст «Бобер думає...» саме в блоці БОТА на реальну відповідь
+                document.getElementById(botMessageId).innerText = data.response;
                 
             } catch (error) {
-                document.getElementById(typingId).innerText = "Помилка зв'язку з базою знань. Але запит міг записатися!";
+                document.getElementById(botMessageId).innerText = "Мій мозок залагав, але слова я твої схоже вивчив! Спробуй ще раз.";
                 console.error(error);
             }
-        }
-
-        function appendMessage(text, className) {
-            const msgDiv = document.createElement('div');
-            const id = 'msg-' + Date.now();
-            msgDiv.id = id;
-            msgDiv.classList.add('message', className);
-            msgDiv.innerText = text;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            return id;
         }
     </script>
 </body>
