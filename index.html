@@ -178,7 +178,7 @@
 </head>
 <body>
 
-    <h1 style="margin-bottom: 10px; color: var(--accent-color); text-shadow: 0 2px 10px var(--accent-glow);">🦫 BOBROAI v6.6 (pre-release)</h1>
+    <h1 style="margin-bottom: 10px; color: var(--accent-color); text-shadow: 0 2px 10px var(--accent-glow);">🦫 BOBROAI v6.6.1 (pre-release)</h1>
     <p style="margin-top: 0; color: #aaa;">Власна нейромережа самонавчання</p>
 
     <div class="chat-container">
@@ -245,11 +245,29 @@
                 });
 
                 const data = await response.json();
-                document.getElementById(botMessageId).innerText = data.response;
+                
+                // Якщо бекенд прислав код
+                if (data.isCode) {
+                    const msgDiv = document.getElementById(botMessageId);
+                    msgDiv.innerHTML = `
+                        <div>${data.response}</div>
+                        <div style="background:#15151a; padding:10px; border-radius:8px; margin-top:10px; border:1px solid #ff9f43;">
+                            <code id="code-${botMessageId}" style="display:block; white-space:pre-wrap; font-family:monospace; margin-bottom:10px;">${data.codeData}</code>
+                            <button onclick="copyCode('code-${botMessageId}')" style="width:100%; cursor:pointer; background:#ff9f43; border:none; padding:5px; border-radius:4px; font-weight:bold;">Copy Code</button>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById(botMessageId).innerText = data.response;
+                }
             } catch (error) {
-                document.getElementById(botMessageId).innerText = "Мій мозок залагав, але слова я твої схоже вивчив! Спробуй ще раз.";
-                console.error(error);
+                document.getElementById(botMessageId).innerText = "Мій мозок залагав... 🦫";
             }
+        }
+
+        // Функція копіювання
+        function copyCode(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => alert("Код у буфері! 🦫"));
         }
     </script>
 </body>
